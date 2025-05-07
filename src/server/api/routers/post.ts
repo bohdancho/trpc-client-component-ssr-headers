@@ -1,4 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 import { cookies } from "next/headers";
 
 // Mocked DB
@@ -17,6 +18,7 @@ export const postRouter = createTRPCRouter({
   getLatest: publicProcedure.query(async () => {
     const cookieStore = await cookies();
     const session = cookieStore.get("session");
-    return session ? posts.at(-1) : null;
+    if (!session) throw new TRPCError({ code: "UNAUTHORIZED" });
+    return posts.at(-1);
   }),
 });
