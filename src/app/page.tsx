@@ -3,11 +3,13 @@ import styles from "./index.module.css";
 import { cookies } from "next/headers";
 
 export default async function Home() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <Auth />
-        <LatestPost />
+        {session && <LatestPost />}
       </div>
     </main>
   );
