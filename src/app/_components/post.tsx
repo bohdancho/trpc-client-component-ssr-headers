@@ -1,22 +1,10 @@
 "use client";
 
-import { useState } from "react";
-
 import { api } from "@/trpc/react";
 import styles from "../index.module.css";
 
 export function LatestPost() {
   const [latestPost] = api.post.getLatest.useSuspenseQuery();
-  console.log(latestPost);
-
-  const utils = api.useUtils();
-  const [name, setName] = useState("");
-  const createPost = api.post.create.useMutation({
-    onSuccess: async () => {
-      await utils.post.invalidate();
-      setName("");
-    },
-  });
 
   return (
     <div className={styles.showcaseContainer}>
@@ -27,29 +15,6 @@ export function LatestPost() {
       ) : (
         <p className={styles.showcaseText}>You have no posts yet.</p>
       )}
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createPost.mutate({ name });
-        }}
-        className={styles.form}
-      >
-        <input
-          type="text"
-          placeholder="Title"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={styles.input}
-        />
-        <button
-          type="submit"
-          className={styles.submitButton}
-          disabled={createPost.isPending}
-        >
-          {createPost.isPending ? "Submitting..." : "Submit"}
-        </button>
-      </form>
     </div>
   );
 }
